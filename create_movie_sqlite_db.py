@@ -40,11 +40,11 @@ c = conn.cursor()
 
 # If there are issues creating the tables, use this code block to drop the tables and delete the empty space in the database
 # https://stackoverflow.com/questions/4712929/how-to-use-sqlite-3s-vacuum-command-in-python, how to use vacuum to clear unused space from database
-# c.execute('''DROP TABLE links''')
-# c.execute('''DROP TABLE movies''')
-# c.execute('''DROP TABLE ratings''')
-# c.execute('''DROP TABLE tags''')
-# c.execute("VACUUM") 
+c.execute('''DROP TABLE links''')
+c.execute('''DROP TABLE movies''')
+c.execute('''DROP TABLE ratings''')
+c.execute('''DROP TABLE tags''')
+c.execute("VACUUM") 
 
 conn.commit()
 

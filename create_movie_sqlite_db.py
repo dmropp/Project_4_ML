@@ -29,13 +29,13 @@ c = conn.cursor()
 # .quit
 
 # Import csv data to tables. Run this code block second.
-# links_data = pd.read_csv("ml-latest-small/links.csv")
+# links_data = pd.read_csv("data/links.csv")
 # links_data.to_sql("links", conn, if_exists='append', index=False)
-# movies_data = pd.read_csv("ml-latest-small/movies.csv")
+# movies_data = pd.read_csv("data/movies.csv")
 # movies_data.to_sql("movies", conn, if_exists='append', index=False)
-# ratings_data = pd.read_csv("ml-latest-small/ratings.csv")
+# ratings_data = pd.read_csv("data/ratings.csv")
 # ratings_data.to_sql("ratings", conn, if_exists='append', index=False)
-# tags_data = pd.read_csv("ml-latest-small/tags.csv") 
+# tags_data = pd.read_csv("data/tags.csv") 
 # tags_data.to_sql("tags", conn, if_exists='append', index=False)
 
 # If there are issues creating the tables, use this code block to drop the tables and delete the empty space in the database

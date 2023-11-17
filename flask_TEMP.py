@@ -68,5 +68,10 @@ def movies():
     return jsonify(result=result)
 
 
+# NEED to figure how to combine the tables within a call, to get the big df
+# I think referencing from different json files might fuck this up
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

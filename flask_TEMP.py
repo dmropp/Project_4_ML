@@ -54,15 +54,16 @@ def movies():
     # session creation
     session = Session(engine)
     # selecting for ratings.userId, ratings.movieId, ratings.rating
-    # selecting for movies.movieId and movies.title
-    combined_data = session.query(ratings, movies).filter(ratings.movieId == movies.movieID).all()
     
-    result = [{'Movies ID': item.movies.movieId, 
-            'Movie Title': item.movies.title,
-                'User ID': item.ratings.userID,
-                'Rating': item.ratings.rating} for item in combined_data]
+    data_ratings = session.query(ratings.userId, ratings.movieId, ratings.rating).group_by(ratings.userId)
+    
+    result = [{
+        'User ID': userId, 
+        'Movie ID': movieId,
+        'Rating': rating} for userId, movieId, rating in data_ratings]
     
     session.close()
+    # return as json dict
     app.json.sort_keys = False
     return jsonify(result=result)
 

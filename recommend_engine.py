@@ -7,16 +7,27 @@ from sklearn.feature_extraction.text import CountVectorizer
 ## get route attribution
 from difflib import get_close_matches
 ## TEMP MODEL LOADING
-from sklearn.externals import joblib
+import sklearn.external as extjoblib
+import joblib
 
-import numpy as np
-import sqlalchemy
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, func
-from flask import Flask, jsonify, request
-import datetime as dt
+# fuck this, im going full basic bitch
+import pandas as pd
+import requests
 
+# request to the API endpoint
+api_url = '/api/v1.0/movies' 
+response = requests.get(api_url)
+
+if response.status_code == 200:
+    # Convert the JSON response to a DataFrame
+    json_data = response.json()
+    df = pd.DataFrame(json_data)
+
+else:
+    print("Failed to fetch data from the API")
+
+# do i combine here or in the flask API?
+# need det id for each df otherwise, not sure how preprocess would interact with scikit
 
 def preprocess(movie_cart):
     # convert chosen movies into a feature vector

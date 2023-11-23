@@ -138,36 +138,33 @@ def welcome():
 #     return render_template('simple.html', tables=[tmr_df.to_html()], titles=tmr_df.columns.values) # https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table
 
 # API route returning jsonified dataframe
-@app.route("/movie_data")
-def data():
-    session = Session(engine)
-
-    session.close()
-
-    return tmr_df.to_json(orient="records")
-
-# API route returning SQLite query results
 # @app.route("/movie_data")
 # def data():
 #     session = Session(engine)
 
-#     results = session.query(Movies.movieId, Movies.title, Movies.genres)
-
 #     session.close()
 
-#     movie_info = []
+#     return tmr_df.to_json(orient="records")
 
-#     for result in results:
-#         for movieId, title, genres in results:
-#             movie_dict = {}
-#             movie_dict["movieId"] = movieId
-#             movie_dict["title"] = title
-#             movie_dict["genres"] = genres
-#             movie_info.append(movie_dict)
-    
-#     print(len(movie_info))
+# API route returning SQLite query results
+@app.route("/movie_data")
+def data():
+    session = Session(engine)
 
-#     return jsonify(movie_info)
+    results = session.query(Movies.movieId, Movies.title, Movies.genres)
+
+    session.close()
+
+    movie_info = []
+
+    for movieId, title, genres in results:
+        movie_dict = {}
+        movie_dict["movieId"] = movieId
+        movie_dict["title"] = title
+        movie_dict["genres"] = genres
+        movie_info.append(movie_dict)
+
+    return jsonify(movie_info)
 
 
 if __name__ == "__main__":

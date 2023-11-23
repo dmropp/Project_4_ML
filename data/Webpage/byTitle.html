@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Title and Genres Autofill</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add the link to the generated JavaScript file -->
+    <script src="movie_data.js"></script>
+</head>
+<body>
+    <h1>Movie Title and Genres Autofill</h1>
+    
+    <!-- Input field for movie titles -->
+    <label for="movie-input">Type a movie title:</label>
+    <input type="text" id="movie-input" oninput="getSuggestions(this.value)">
+    
+    <!-- Clear button -->
+    <button onclick="clearInput()">Clear</button>
+
+
+    
+    <!-- Container to display suggestions -->
+    <div id="suggestions-container"></div>
+
+    <!-- Container to display movies with matching genres -->
+    <div id="matching-genres-container"></div>
+    <div id="matching-genres-container" class="matching-genres-text"></div>
+
+    <script>
+        // Use the movieData array generated from the Jupyter Notebook
+        function getSuggestions(input) {
+            var suggestionsContainer = document.getElementById('suggestions-container');
+            suggestionsContainer.innerHTML = '';
+    
+            // Filter movie data based on user input
+            var matchingTitles = movieData.filter(function(item) {
+                return item[0].toLowerCase().includes(input.toLowerCase());
+            });
+    
+           // Display suggestions
+           matchingTitles.forEach(function(item) {
+                var suggestionElement = document.createElement('div');
+                suggestionElement.className = 'suggestion';
+                suggestionElement.textContent = item[0];
+                suggestionElement.onclick = function() {
+                    // Fill input field with selected suggestion
+                    document.getElementById('movie-input').value = item[0];
+                    suggestionsContainer.innerHTML = ''; // Clear suggestions
+
+                    // Display other movies with matching genres
+                    displayMatchingGenres(item[1]);
+                };
+                suggestionsContainer.appendChild(suggestionElement);
+            });
+        }
+    
+// Function to display other movies with matching genres (limited to 10)
+function displayMatchingGenres(selectedGenres) {
+    var matchingGenresContainer = document.getElementById('matching-genres-container');
+    matchingGenresContainer.innerHTML = '<strong>Movies with Matching Genres:</strong><br>';
+
+    var matchingMoviesCount = 0;
+
+    movieData.forEach(function(item) {
+        if (item[1] === selectedGenres && item[0] !== document.getElementById('movie-input').value) {
+            if (matchingMoviesCount < 10) {
+                var matchingMovieElement = document.createElement('div');
+                matchingMovieElement.className = 'matching-movie';
+                matchingMovieElement.textContent = item[0];
+
+                // Add a tooltip with the genre
+                matchingMovieElement.title = "Genre: " + item[1];
+
+                // Add click event to fetch movie overview from TMDb API based on the movie title
+                matchingMovieElement.onclick = function() {
+                    fetchMovieOverview(item[0]); // Passing the movie title to the API call
+                };
+
+                matchingGenresContainer.appendChild(matchingMovieElement);
+                matchingMoviesCount++;
+            }
+        }
+    });
+}
+
+        // Function to populate the genre dropdown
+        function populateGenreDropdown() {
+            var genreDropdown = document.getElementById('genre-dropdown');
+            
+            // Extract all unique genres from movieData
+            var allGenres = [];
+            movieData.forEach(function(item) {
+                item[1].split('|').forEach(function(genre) {
+                    if (!allGenres.includes(genre)) {
+                        allGenres.push(genre);
+                        // Create an option element and add it to the dropdown
+                        var option = document.createElement('option');
+                        option.value = genre;
+                        option.textContent = genre;
+                        genreDropdown.appendChild(option);
+                    }
+                });
+            });
+        }
+
+        // Call the function to populate the genre dropdown when the page loads
+        populateGenreDropdown();
+
+// Function to fetch movie overview from TMDb API based on the movie title
+
+function fetchMovieOverview(movieTitle) {
+    // Remove the year from the movie title (assuming it's always in parentheses at the end)
+    var cleanedMovieTitle = movieTitle.replace(/\s*\(\d{4}\)$/, ''); // Removes the last space, parentheses, and four digits (year)
+
+    var apiKey = 'e08cded3c0df1987b98a93ca27993136'; // Replace with your TMDb API key
+    var tmdbSearchUrl = 'https://api.themoviedb.org/3/search/movie?query=' + encodeURIComponent(cleanedMovieTitle) + '&api_key=' + apiKey;
+
+    // Make the API call to search for the movie based on the title
+    fetch(tmdbSearchUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.results.length > 0) {
+                var movieId = data.results[0].id; // Assuming the first result is the correct movie
+                var tmdbMovieUrl = 'https://api.themoviedb.org/3/movie/' + movieId + '?api_key=' + apiKey;
+
+                // Make the API call to get detailed movie information
+                return fetch(tmdbMovieUrl);
+            } else {
+                throw new Error('Movie not found on TMDb');
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display overview in a box or alert
+            alert("Overview:\n" + data.overview);
+        })
+        .catch(error => console.error('Error fetching movie overview:', error));
+    }
+
+    
+
+    
+        // Function to clear the input field and matching genres container
+        function clearInput() {
+            document.getElementById('movie-input').value = '';
+            var matchingGenresContainer = document.getElementById('matching-genres-container');
+            matchingGenresContainer.innerHTML = ''; // Clear matching genres
+        }
+    </script>
+</body>
+</html>

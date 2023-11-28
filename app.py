@@ -4,6 +4,8 @@ warnings.filterwarnings("ignore")
 import numpy as np
 import datetime as dt
 
+import sqlite3
+
 import sqlalchemy as db
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -13,158 +15,142 @@ from flask import Flask, jsonify, render_template
 
 import pandas as pd
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.neighbors import NearestNeighbors
+import numpy as np
+import random
+from joblib import Parallel, delayed
+
 engine = create_engine("sqlite:///movie_ratings_db.sqlite")
-
-Base = automap_base()
-
-Base.prepare(autoload_with=engine)
-
-Links = Base.classes.links
-Movies = Base.classes.movies
-Ratings = Base.classes.ratings
-Tags = Base.classes.tags
-
-print(Base.classes.keys())
-
-# https://www.geeksforgeeks.org/sqlalchemy-orm-conversion-to-pandas-dataframe/#
-
-links_df = pd.read_sql_query(
-    sql = db.select([Links.movieId,
-                     Links.imdbId,
-                     Links.tmdbId]),
-    con = engine
-)
-
-# print(len(links_df)) # Length should be 9742
-links_df.head()
-
-# We can probably ignore this table
-
-movies_df = pd.read_sql_query(
-    sql = db.select([Movies.movieId,
-                     Movies.title,
-                     Movies.genres]),
-    con = engine
-)
-
-# print(len(movies_df)) # Length should be 9742
-movies_df.head()
-
-ratings_df = pd.read_sql_query(
-    sql = db.select([Ratings.userId,
-                     Ratings.movieId,
-                     Ratings.rating,
-                     Ratings.timestamp]),
-    con = engine
-)
-
-# print(len(ratings_df)) # Length should be 100836
-ratings_df.head()
-
-tags_df = pd.read_sql_query(
-    sql = db.select([Tags.userId,
-                     Tags.movieId,
-                     Tags.tag,
-                     Tags.timestamp]),
-    con = engine
-)
-
-# print(len(tags_df)) # Length should be 3683
-tags_df.head()
-
-# split genres column, drop original genres column, rename the first genre column to genre, drop additional genre columns
-# in order to only keep first genre listed, assuming that's the most relevant 
-movies_df_copy = movies_df.copy()
-new = movies_df_copy["genres"].str.split("|",expand=True)
-for i in new:
-    movies_df_copy[f"genre{i + 1}"] = new[i]
-movies_df_copy.drop(columns=["genres"], inplace=True)
-movies_trimmed = movies_df_copy.rename(columns={"genre1": "genre"})
-movies_trimmed.drop(columns=["genre2", "genre3", "genre4", "genre5", "genre6", "genre7", "genre8", "genre9", "genre10"], inplace=True)
-# print(len(movies_trimmed))
-movies_trimmed.dropna(inplace=True)
-# print(len(movies_trimmed["title"].unique()))
-movies_trimmed.set_index("movieId", inplace=True)
-# movies_trimmed.head(100)
-
-# add movie title and genre to tags dataframe based on movieId
-tags_movies = tags_df.copy()
-tags_movies["title"] = ""
-tags_movies["genre"] = ""
-for i in range(len(tags_movies)):
-    movie = tags_movies.loc[i, "movieId"]
-    film = movies_trimmed.at[movie, "title"]
-    genre = movies_trimmed.at[movie, "genre"]
-    tags_movies.loc[tags_movies.index[i], "title"] = film
-    tags_movies.loc[tags_movies.index[i], "genre"] = genre
-# print(len(tags_movies["userId"].unique()))
-# tags_movies.head(25)
-
-# Add ratings for each user/movie combo to movies + tags dataframe
-tags_movies_ratings = tags_movies.copy()
-tags_movies_ratings["rating"] = ""
-for j in range(len(tags_movies_ratings)):
-    user = tags_movies_ratings.loc[j, "userId"]
-    movie = tags_movies_ratings.loc[j, "movieId"]
-    rating = ratings_df.loc[((ratings_df["userId"]==user) & (ratings_df["movieId"]==movie)), "rating"] 
-    if not rating.empty:
-        tags_movies_ratings.loc[tags_movies_ratings.index[j], "rating"] = rating.item()
-# tags_movies_ratings.head(25)
-
-tmr_df = tags_movies_ratings.drop(columns="timestamp")  
 
 app = Flask(__name__)
 
 @app.route("/")
 def welcome():
-    session = Session(engine)
-    session.close()
+    # session = Session(engine)
+    # session.close()
 
-    return ( # https://www.w3schools.com/html/html_links.asp, referenced for how to use HTML links
-        f"<h2 id='Welcome Page Header'>Welcome to our Movie Recommendations App!</h2>" 
-        f"<h3 id='Subheader'>Please use the following routes:</h3>"
-        f"<p>"
-        f"<a href='http://127.0.0.1:5000/movie_data'>movie_data </a>"
-        f"for json data of all movie titles in the database<br>"
-    )
+    return render_template("index.html")
 
-# API route returning a dataframe
-# @app.route("/movie_data")
-# def data():
-#     session = Session(engine)
+@app.route("/genre")
+def genre():
+    # session = Session(engine)
+    # session.close()
 
-#     session.close()
+    return render_template("reregenre.html")
 
-#     return render_template('simple.html', tables=[tmr_df.to_html()], titles=tmr_df.columns.values) # https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table
+@app.route("/title")
+def title():
+    # session = Session(engine)
+    # session.close()
 
-# API route returning jsonified dataframe
-# @app.route("/movie_data")
-# def data():
-#     session = Session(engine)
+    return render_template("reretitle.html")
 
-#     session.close()
+@app.route("/recommendation_engine")
+def rec_engine():
 
-#     return tmr_df.to_json(orient="records")
+    conn = sqlite3.connect('movie_ratings_db.sqlite')
 
-# API route returning SQLite query results
-@app.route("/movie_data")
-def data():
-    session = Session(engine)
+    # Model code
+    # Query the data from the ratings table and join with the movies table
+    query = """
+        SELECT r.userId, r.movieId, r.rating, m.title, m.genres
+        FROM ratings r
+        JOIN movies m ON r.movieId = m.movieId
+    """
+    df = pd.read_sql_query(query, conn)
 
-    results = session.query(Movies.movieId, Movies.title, Movies.genres)
+    # Assuming the genres column is in the format "Genre1|Genre2|Genre3"
+    # Convert genres into a list
+    df['genres'] = df['genres'].str.split('|')
 
-    session.close()
+    # Content-Based Filtering (using Genres)
+    df['genres_str'] = df['genres'].apply(lambda x: ' '.join(x))
+    tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tfidf_vectorizer.fit_transform(df['genres_str'])
 
-    movie_info = []
+    # Approximate Nearest Neighbors with NearestNeighbors
+    nn = NearestNeighbors(n_neighbors=5, algorithm='auto', metric='cosine')
+    nn.fit(tfidf_matrix)
 
-    for movieId, title, genres in results:
-        movie_dict = {}
-        movie_dict["movieId"] = movieId
-        movie_dict["title"] = title
-        movie_dict["genres"] = genres
-        movie_info.append(movie_dict)
+    # Collaborative Filtering (User-Item Interactions)
+    user_movie_ratings = df.pivot_table(index='userId', columns='title', values='rating')
+    user_movie_ratings = user_movie_ratings.fillna(0)
+    movie_user_ratings = user_movie_ratings.T
+    movie_similarity = cosine_similarity(movie_user_ratings)
 
-    return jsonify(movie_info)
+    # Function to get similar items based on NearestNeighbors
+    def get_similar_items_nn(movie_index):
+        distances, indices = nn.kneighbors(tfidf_matrix[movie_index])
+        similar_items = df.iloc[indices[0]]['title'].tolist()
+        return similar_items
+
+    # Function to get similar items based on Collaborative Filtering
+    def get_similar_items_cf(movie_title, top_n=5):
+        movie_ratings = user_movie_ratings[movie_title]
+        
+        # Ensure the movie_ratings is a 2D array (column vector)
+        movie_ratings = movie_ratings.values.reshape(-1, 1)
+        
+        # Calculate similarity scores using a loop
+        similar_scores = [np.sum(movie_ratings.T * movie_similarity[:, i].reshape(-1, 1)) for i in range(movie_similarity.shape[0])]
+        
+        # Create a DataFrame with movie titles and similarity scores
+        similar_movies_df = pd.DataFrame({'movie': movie_user_ratings.index, 'similarity': similar_scores})
+        
+        # Sort by similarity and get the top N
+        similar_movies_df = similar_movies_df.sort_values(by='similarity', ascending=False).head(top_n)
+        
+        return similar_movies_df['movie'].tolist()
+
+    # Function to get hybrid recommendations (combining CF and CB)
+    def get_hybrid_recommendations(selected_movies, top_n=5):
+        # Get similar movies using collaborative filtering for each selected movie
+        cf_recommendations = Parallel(n_jobs=-1)(delayed(get_similar_items_cf)(movie_title, top_n=top_n) for movie_title in selected_movies)
+        cf_recommendations = [item for sublist in cf_recommendations for item in sublist]
+        
+        # Get similar movies using content-based filtering with genre filter
+        cb_recommendations = Parallel(n_jobs=-1)(delayed(get_similar_items_nn)(df[df['title'] == movie_title].index[0]) for movie_title in selected_movies)
+        cb_recommendations = [item for sublist in cb_recommendations for item in sublist]
+        
+        # Filter content-based recommendations based on genre relevance
+        genre_filter = set().union(*(tuple(genre) for movie_title in selected_movies for genre in df[df['title'] == movie_title]['genres']))
+        cb_recommendations_filtered = [movie for movie in cb_recommendations if any(set(genre) & genre_filter for genre in df[df['title'] == movie]['genres'])]
+
+        # Combine the recommendations from both methods
+        hybrid_recommendations = list(set(cf_recommendations + cb_recommendations_filtered))[:top_n]
+        
+        return hybrid_recommendations
+
+    # Function to allow the user to choose movies from a random list
+    def choose_movies():
+        # Get a list of 10 random movies
+        random_movies = random.sample(df['title'].tolist(), 10)
+        
+        print("Choose up to 5 movies from the list:")
+        selected_movies = []
+        count = 0
+        while count < 5:
+            print(f"{count + 1}. {random_movies[count]}")
+            choice = input("Enter 'yes' if you like this movie or 'no' if you don't: ").lower()
+            if choice == 'yes':
+                selected_movies.append(random_movies[count])
+                count += 1
+            elif choice == 'no':
+                # Choose a different movie randomly
+                random_movies.pop(count)
+                random_movies.append(random.choice(df['title'].tolist()))
+            elif choice != 'no':
+                print("Invalid choice. Please enter 'yes' or 'no'.")
+        return selected_movies
+
+    # Example: Get user-selected movies and generate recommendations
+    selected_movies = choose_movies()
+    hybrid_recommendations = get_hybrid_recommendations(selected_movies, top_n=5)
+    print(f'Hybrid recommendations based on user-selected movies:\n{hybrid_recommendations}')
+
+    return render_template("simple.html")
 
 
 if __name__ == "__main__":

@@ -1,71 +1,39 @@
-# import dependencies
-## flask interaction
-from flask import Flask, request, render_template
-from flask_cors import cross_origin
-## data pre-process
-from sklearn.feature_extraction.text import CountVectorizer
-## get route attribution
-from difflib import get_close_matches
-## TEMP MODEL LOADING
-import sklearn.external as extjoblib
-import joblib
+# import our dependencies
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import tensorflow as tf
 
-# fuck this, im going full basic bitch
 import pandas as pd
+import numpy as np
+import datetime as dt
+
+import sqlite3
+import sqlalchemy as db
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, func, inspect
+
+from flask import Flask, jsonify, render_template, request
+
+import warnings
+warnings.filterwarnings('ignore')
 import requests
 
-# request to the API endpoint
-api_url = '/api/v1.0/movies' 
-response = requests.get(api_url)
+#########################
+con = sqlite3.connect("movie_ratings_db.sqlite")
+links_df = pd.read_sql_query("SELECT * FROM Links", con)
+movies_df = pd.read_sql_query("SELECT * FROM Movies", con)
+ratings_df = pd.read_sql_query("SELECT * FROM Ratings", con)
+tags_df = pd.read_sql_query("SELECT * FROM Tags", con)
 
-if response.status_code == 200:
-    # Convert the JSON response to a DataFrame
-    json_data = response.json()
-    df = pd.DataFrame(json_data)
+# genre split, encode as categorical
+genres_split = movies_df['genres'].str.get_dummies('|')
+movies_encoded = pd.concat([movies_df, genres_split], axis=1)
+movies_encoded.drop('genres', axis=1, inplace=True)
 
-else:
-    print("Failed to fetch data from the API")
+# prep tags_df, ratings_df
+tags_df = tags_df.drop(columns='timestamp')
+ratings_df = ratings_df.drop(columns='timestamp')
 
-# do i combine here or in the flask API?
-# need det id for each df otherwise, not sure how preprocess would interact with scikit
-
-def preprocess(movie_cart):
-    # convert chosen movies into a feature vector
-    vectorizer = CountVectorizer()
-    movie_features = vectorizer.fit_transform(movie_cart)
-    return movie_features
-
-movie_cart=[]
-
-@app.route('/', methods=['POST', 'GET'])
-def recommendation():
-    if request.method == 'POST':
-        try:
-            # reading the inputs given by the user
-            # indeterminate if we want variable length restrictions
-            title1 = request.form['search1'].lower()
-            title2 = request.form['search2'].lower()
-            title3 = request.form['search3'].lower()
-
-            # Combining the three titles into a single string
-            combined_titles = ' '.join([title1, title2, title3])
-
-            # Create count matrix from the combined column
-            vectorizer = CountVectorizer()
-            movie_features = vectorizer.fit_transform()
-
-            # declare model, compute similarity index, REFACTOR w. sklearn
-            
-
-            # get close matches from our movie list
-            correct_titles = [get_close_matches(title, movie_cart, n=3, cutoff=0.6)[0] for title in [title1, title2, title3]]
-
-            # run string into pre calibrated model
-            
-            # 
-
-            return render_template('recommended.html')
-
-        except Exception as e:
-            print(e)
-            return render_template("error.html")
+# rewrite for ratings only
+tags_ratings_df = pd.merge(tags_df, ratings_df, on='userId', how='left')

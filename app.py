@@ -54,22 +54,16 @@ app = Flask(__name__)
 
 @app.route("/")
 def welcome():
-    # session = Session(engine)
-    # session.close()
 
     return render_template("index.html")
 
 @app.route("/genre")
 def genre():
-    # session = Session(engine)
-    # session.close()
 
     return render_template("reregenre.html")
 
 @app.route("/title")
 def title():
-    # session = Session(engine)
-    # session.close()
 
     return render_template("reretitle.html")
 
@@ -158,5 +152,5 @@ def rec_engine():
 
 
 if __name__ == "__main__":
-    # load model
+
     app.run(debug=True)

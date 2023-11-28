@@ -148,7 +148,7 @@ def rec_engine():
     # Call the function to start the recommendation process
     redraw_recommendations()
 
-    return render_template("simple.html")
+    return render_template("rec_engine.html")
 
 
 if __name__ == "__main__":

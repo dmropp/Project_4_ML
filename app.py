@@ -24,6 +24,32 @@ from joblib import Parallel, delayed
 
 engine = create_engine("sqlite:///movie_ratings_db.sqlite")
 
+conn = sqlite3.connect('movie_ratings_db.sqlite')
+
+
+# Query a subset of the data to speed up development/testing
+# Adjust the LIMIT clause based on your dataset size
+query = """
+    SELECT r.userId, r.movieId, r.rating, m.title, m.genres
+    FROM ratings r
+    JOIN movies m ON r.movieId = m.movieId
+    LIMIT 10000  -- Adjust this limit based on your dataset size
+"""
+df = pd.read_sql_query(query, conn)
+
+# Assuming the genres column is in the format "Genre1|Genre2|Genre3"
+# Convert genres into a list
+df['genres'] = df['genres'].str.split('|')
+
+# Content-Based Filtering (using Genres)
+df['genres_str'] = df['genres'].apply(lambda x: ' '.join(x))
+tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_features=1000)  # Adjust max_features
+tfidf_matrix = tfidf_vectorizer.fit_transform(df['genres_str'])
+
+# Approximate Nearest Neighbors with NearestNeighbors
+nn = NearestNeighbors(n_neighbors=5, algorithm='auto', metric='cosine')
+nn.fit(tfidf_matrix)
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -51,31 +77,31 @@ def title():
 def rec_engine():
 
     # Connect to the SQLite database
-    conn = sqlite3.connect('movie_ratings_db.sqlite')
+    # conn = sqlite3.connect('movie_ratings_db.sqlite')
 
 
-    # Query a subset of the data to speed up development/testing
-    # Adjust the LIMIT clause based on your dataset size
-    query = """
-        SELECT r.userId, r.movieId, r.rating, m.title, m.genres
-        FROM ratings r
-        JOIN movies m ON r.movieId = m.movieId
-        LIMIT 10000  -- Adjust this limit based on your dataset size
-    """
-    df = pd.read_sql_query(query, conn)
+    # # Query a subset of the data to speed up development/testing
+    # # Adjust the LIMIT clause based on your dataset size
+    # query = """
+    #     SELECT r.userId, r.movieId, r.rating, m.title, m.genres
+    #     FROM ratings r
+    #     JOIN movies m ON r.movieId = m.movieId
+    #     LIMIT 10000  -- Adjust this limit based on your dataset size
+    # """
+    # df = pd.read_sql_query(query, conn)
 
-    # Assuming the genres column is in the format "Genre1|Genre2|Genre3"
-    # Convert genres into a list
-    df['genres'] = df['genres'].str.split('|')
+    # # Assuming the genres column is in the format "Genre1|Genre2|Genre3"
+    # # Convert genres into a list
+    # df['genres'] = df['genres'].str.split('|')
 
-    # Content-Based Filtering (using Genres)
-    df['genres_str'] = df['genres'].apply(lambda x: ' '.join(x))
-    tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_features=1000)  # Adjust max_features
-    tfidf_matrix = tfidf_vectorizer.fit_transform(df['genres_str'])
+    # # Content-Based Filtering (using Genres)
+    # df['genres_str'] = df['genres'].apply(lambda x: ' '.join(x))
+    # tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_features=1000)  # Adjust max_features
+    # tfidf_matrix = tfidf_vectorizer.fit_transform(df['genres_str'])
 
-    # Approximate Nearest Neighbors with NearestNeighbors
-    nn = NearestNeighbors(n_neighbors=5, algorithm='auto', metric='cosine')
-    nn.fit(tfidf_matrix)
+    # # Approximate Nearest Neighbors with NearestNeighbors
+    # nn = NearestNeighbors(n_neighbors=5, algorithm='auto', metric='cosine')
+    # nn.fit(tfidf_matrix)
 
     # Collaborative Filtering (User-Item Interactions)
     user_movie_ratings = df.pivot_table(index='userId', columns='title', values='rating', fill_value=0)

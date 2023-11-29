@@ -139,6 +139,8 @@ def rec_engine():
         while True:
             selected_movies = choose_movies()
             hybrid_recommendations = get_hybrid_recommendations(selected_movies, top_n=5)
+            global result
+            result = hybrid_recommendations.copy()
             print(f'Hybrid recommendations based on user-selected movies:\n{hybrid_recommendations}')
 
             redraw = input("Do you want to redraw recommendations? Enter 'yes' or 'no': ").lower()
@@ -148,7 +150,7 @@ def rec_engine():
     # Call the function to start the recommendation process
     redraw_recommendations()
 
-    return render_template("rec_engine.html")
+    return render_template("rec_engine.html", recs=result)
 
 
 if __name__ == "__main__":

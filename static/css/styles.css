@@ -260,3 +260,7 @@ button {
   .no-btn {
     background-color: #dc3545; /* Change the "No" button color to red*/
   }
+
+  .movie-recs {
+    color: white;
+  }

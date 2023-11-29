@@ -12,8 +12,31 @@
     <link rel="stylesheet" href="../static/css/styles.css">
 
     <!-- Add the link to the generated JavaScript file -->
-    <script src="../static/js/movie_data.js"></script>
+    <script src="movie_data.js"></script>
 </head>
+
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="index.html">
+        <img src="header_logo.png" alt="Your Logo" height="40">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="Yes_No.html">Yes or No?</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="random.html">Random</a>
+            </li>
+            <!-- Add more pages as needed -->
+        </ul>
+    </div>
+</header>
+
 <body class="bg-light">
 
     <div class="container mt-5">
@@ -74,31 +97,47 @@
         }
     
 // Function to display other movies with matching genres (limited to 10)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function displayMatchingGenres(selectedGenres) {
     var matchingGenresContainer = document.getElementById('matching-genres-container');
     matchingGenresContainer.innerHTML = '<strong>Movies with Matching Genres:</strong><br>';
 
-    var matchingMoviesCount = 0;
+    var matchingMovies = [];
 
     movieData.forEach(function(item) {
         if (item[1] === selectedGenres && item[0] !== document.getElementById('movie-input').value) {
-            if (matchingMoviesCount < 10) {
-                var matchingMovieElement = document.createElement('div');
-                matchingMovieElement.className = 'matching-movie';
-                matchingMovieElement.textContent = item[0];
-
-                // Add a tooltip with the genre
-                matchingMovieElement.title = "Genre: " + item[1];
-
-                // Add click event to fetch movie overview from TMDb API based on the movie title
-                matchingMovieElement.onclick = function() {
-                    fetchMovieOverview(item[0]); // Passing the movie title to the API call
-                };
-
-                matchingGenresContainer.appendChild(matchingMovieElement);
-                matchingMoviesCount++;
-            }
+            matchingMovies.push(item);
         }
+    });
+
+    // Shuffle the array of matching movies
+    shuffleArray(matchingMovies);
+
+    var matchingMoviesCount = 0;
+
+    // Display up to 10 random matching movies
+    matchingMovies.slice(0, 10).forEach(function(item) {
+        var matchingMovieElement = document.createElement('div');
+        matchingMovieElement.className = 'matching-movie';
+        matchingMovieElement.textContent = item[0];
+
+        // Add a tooltip with the genre
+        matchingMovieElement.title = "Genre: " + item[1];
+
+        // Add click event to fetch movie overview from TMDb API based on the movie title
+        matchingMovieElement.onclick = function() {
+            fetchMovieOverview(item[0]); // Passing the movie title to the API call
+        };
+
+        matchingGenresContainer.appendChild(matchingMovieElement);
+        matchingMoviesCount++;
     });
 }
 function handleModalClick(event) {
@@ -252,6 +291,8 @@ fetchWatchInfo(movieTitle)
             var matchingGenresContainer = document.getElementById('matching-genres-container');
             matchingGenresContainer.innerHTML = ''; // Clear matching genres
         }
+
+        
     </script>
 
 </body>

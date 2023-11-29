@@ -6,16 +6,20 @@
     <title>Movie Recommendation System</title>
     <!-- Bootstrap CSS link -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h1 class="mb-4">Welcome to the Movie Recommendation System</h1>
-        <p>Choose how you want to get movie recommendations:</p>
-        <ul class="list-group">
-            <!-- <li class="list-group-item"><a href="reretitle.html">By Movie Title</a></li>
-            <li class="list-group-item"><a href="reregenre.html">By Genre</a></li> -->
-            <li class="list-group-item"><a href="http://127.0.0.1:5000/title">By Movie Title</a></li>
-            <li class="list-group-item"><a href="http://127.0.0.1:5000/genre">By Genre</a></li>
+        <!-- Replace the text with an image -->
+        <h1 class="mb-4"><img src="logo.png" alt="Movie Recommendation System Logo" width="600px"></h1>
+            <!-- Card for movie recommendation options -->
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text">Choose how you want to get movie recommendations:</p>
+            <ul class="list-group d-flex flex-row justify-content-center">
+            <li class="list-group-item"><a href="http://127.0.0.1:5000/title">Movie Title</a></li>
+            <li class="list-group-item"><a href="http://127.0.0.1:5000/random">Random</a></li>
             <li class="list-group-item"><a href="http://127.0.0.1:5000/recommendation_engine">Recommendation Engine</a></li>
         </ul>
     </div>

@@ -9,10 +9,20 @@
 <body>
     <h1>Movie Recommendations</h1>
     <p>{{ movie_title }}</p>
+    <p>Likes: {{ like_counter }}</p>
     <form method="post" action="{{ url_for('rec_engine') }}">
-        <button type="submit" name="action" value="like">Like</button>
-        <button type="submit" name="action" value="dislike">Dislike</button>
-        <button type="submit" name="action" value="unsure">Unsure</button>
+        <input type="hidden" name="action" value="like">
+        <button type="submit">Like</button>
+    </form>
+
+    <form method="post" action="{{ url_for('rec_engine') }}">
+        <input type="hidden" name="action" value="dislike">
+        <button type="submit">Dislike</button>
+    </form>
+
+    <form method="post" action="{{ url_for('rec_engine') }}">
+        <input type="hidden" name="action" value="skip">
+        <button type="submit">Skip</button>
     </form>
 </body>
 </html>

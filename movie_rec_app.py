@@ -168,13 +168,11 @@ def rec_engine():
             if session['like_counter'] == 5:
                 # Call the function to start the recommendation process
                 redraw_recommendations()
+                # Reset the like counter
                 session['like_counter'] = 0
                 # https://stackoverflow.com/questions/48148131/how-can-we-call-one-route-from-another-route-with-parameters-in-flask
                 # Referenced for how to use redirect
                 return redirect(url_for("movie_recs"))
-
-                # Reset the like counter
-                # session['like_counter'] = 0
 
 
     # If the user has not liked 5 movies, continue choosing movies

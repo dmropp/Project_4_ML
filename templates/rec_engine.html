@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Title and Genres Autofill</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+    <!-- Add the link to the generated JavaScript file -->
+    <script src="../static/js/movie_data.js"></script>
+</head>
+
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="http://127.0.0.1:5000/">
+        <img src="../static/css/header_logo.png" alt="Your Logo" height="40">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="Yes_No.html">Yes or No?</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="random.html">Random</a>
+            </li>
+            <!-- Add more pages as needed -->
+        </ul>
+    </div>
+</header>
+<body>
+    <h1>Select Movies</h1>
+    <form action="/recommendation_engine" method="post">
+        <h2>Choose up to 5 movies you like:</h2>
+        <ul>
+            {% for movie in movie_list %}
+                <li>
+                    <input type="checkbox" name="movie_title" value="{{ movie }}">{{ movie }}
+                </li>
+            {% endfor %}
+        </ul>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

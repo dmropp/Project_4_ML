@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Selection</title>
+</head>
+<body>
+    <h1>Select Movies</h1>
+    <form action="/recommendation_engine" method="post">
+        <h2>Choose up to 5 movies you like:</h2>
+        <ul>
+            {% for movie in movie_list %}
+                <li>
+                    <input type="checkbox" name="movie_title" value="{{ movie }}">{{ movie }}
+                </li>
+            {% endfor %}
+        </ul>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

@@ -10,6 +10,9 @@ from tqdm import tqdm_notebook as tqdm
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.neighbors import NearestNeighbors
 from joblib import load
 
 import sqlite3
@@ -19,10 +22,6 @@ warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 
-# Home route - render the input form
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 # Recommendation route - handle movie input and provide recommendations
 @app.route('/recommend', methods=['POST'])
@@ -119,7 +118,7 @@ def recommend():
     train_loader = DataLoader(train_set, batch_size=100, shuffle=True)
 
     # Training loop
-    epochs = 20
+    epochs = 10
 
     for epoch in range(epochs):
             total_loss = 0

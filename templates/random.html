@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Title and Genres Autofill</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+    <!-- Add the link to the generated JavaScript file -->
+    <script src="../static/js/movie_data.js"></script>
+</head>
+<body class="bg-light">
+
+    <header class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="http://127.0.0.1:5000/">
+            <img src="../static/css/header_logo.png" alt="Your Logo" height="40">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="Yes_No.html">Yes or No?</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reretitle.html">By Title</a>
+                </li>
+                <!-- Add more pages as needed -->
+            </ul>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 custom-title">What to Watch Next</h1>
+        
+        <!-- Card container -->
+        <div class="card" style="width: 18rem; background-color: white;">
+            <div class="card-body">
+                <h5 class="card-title" id="randomMovie" onclick="showMovieModal()"></h5>
+
+            </div>
+        </div>
+        
+        <button class="btn btn-reload mt-3" onclick="reloadPage()">Reload Page</button>
+
+        <!-- Modal container -->
+        <div id="modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeMovieModal()">&times;</span>
+                <div class="row">
+                    <div class="col-md-4">
+                        <img id="modalPoster" src="" alt="Movie Poster" style="width: 100%;">
+                    </div>
+                    <div class="col-md-8">
+                        <h2 id="modalTitle"></h2>
+                        <p id="modalOverview"></p>
+                        <p>Where to Watch: <span id="watch-info">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        const apiKey = 'e08cded3c0df1987b98a93ca27993136';
+
+function removeYearFromTitle(title) {
+    // Regular expression to match the year in parentheses
+    const regex = /\(\d{4}\)/;
+    return title.replace(regex, '').trim();
+}
+
+function getRandomMovie() {
+    var randomIndex = Math.floor(Math.random() * movieData.length);
+    var randomMovieId = movieData[randomIndex][1]; // Assuming movieData includes TMDB movie IDs
+    var rawTitle = movieData[randomIndex][0];
+
+    // Remove the year from the movie title
+    var cleanedTitle = removeYearFromTitle(rawTitle);
+
+    // Make a request to TMDB API to get movie details
+    fetch(`https://api.themoviedb.org/3/movie/${randomMovieId}?api_key=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            // Display movie title and overview
+            document.getElementById('randomMovie').textContent = cleanedTitle;
+            document.getElementById('randomMovieOverview').textContent = data.overview;
+        })
+        .catch(error => console.error('Error fetching movie details:', error));
+}
+
+// Display a random movie name when the page loads
+getRandomMovie();
+
+
+        // Function to show the movie modal
+        function showMovieModal() {
+    var modal = document.getElementById('modal');
+    modal.style.display = 'block';
+
+    // Get the movie title from the card
+    var movieTitle = document.getElementById('randomMovie').textContent;
+
+    // Fetch movie details and update the modal content
+    fetchMovieDetails(movieTitle);
+}
+
+        // Function to close the movie modal
+        function closeMovieModal() {
+            var modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        // Function to fetch movie details from TMDb API based on the movie title
+        function fetchMovieDetails(movieTitle) {
+            var cleanedMovieTitle = movieTitle.replace(/\s*\(\d{4}\)$/, '');
+            var apiKey = 'e08cded3c0df1987b98a93ca27993136';
+            var tmdbSearchUrl = 'https://api.themoviedb.org/3/search/movie?query=' + encodeURIComponent(cleanedMovieTitle) + '&api_key=' + apiKey;
+
+            fetch(tmdbSearchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results.length > 0) {
+                        var movieId = data.results[0].id;
+                        var tmdbMovieUrl = 'https://api.themoviedb.org/3/movie/' + movieId + '?api_key=' + apiKey;
+
+                        return fetch(tmdbMovieUrl);
+                    } else {
+                        throw new Error('Movie not found on TMDb');
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the modal content
+                    document.getElementById('modalTitle').textContent = movieTitle;
+                    document.getElementById('modalOverview').textContent = data.overview;
+                    document.getElementById('modalPoster').src = 'https://image.tmdb.org/t/p/w300' + data.poster_path;
+
+                    // Fetch and update watch information
+                    fetchWatchInfo(movieTitle);
+                })
+                .catch(error => console.error('Error fetching movie details:', error));
+        }
+
+        function reloadPage() {
+    location.reload();
+}
+
+        
+    </script>
+
+</body>
+</html>

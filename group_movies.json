@@ -1,0 +1,122 @@
+{
+    "Cluster_0": [
+        "Grumpier Old Men (1995)",
+        "Canadian Bacon (1995)",
+        "Billy Madison (1995)",
+        "Stargate (1994)",
+        "Mask, The (1994)",
+        "Mrs. Doubtfire (1993)",
+        "Three Musketeers, The (1993)",
+        "Twister (1996)",
+        "She's the One (1996)",
+        "Basic Instinct (1992)"
+    ],
+    "Cluster_1": [
+        "Toy Story (1995)",
+        "Seven (a.k.a. Se7en) (1995)",
+        "Bottle Rocket (1996)",
+        "Braveheart (1995)",
+        "Rob Roy (1995)",
+        "Desperado (1995)",
+        "Tommy Boy (1995)",
+        "Fugitive, The (1993)",
+        "Jurassic Park (1993)",
+        "Tombstone (1993)"
+    ],
+    "Cluster_2": [
+        "McHale's Navy (1997)",
+        "I Know What You Did Last Summer (1997)",
+        "I Still Know What You Did Last Summer (1998)",
+        "Psycho (1998)",
+        "Howard the Duck (1986)",
+        "Teenage Mutant Ninja Turtles III (1993)",
+        "NeverEnding Story III, The (1994)",
+        "Visit, The (2000)",
+        "Mighty Morphin Power Rangers: The Movie (1995)",
+        "Richie Rich (1994)"
+    ],
+    "Cluster_3": [
+        "Apocalypse Now (1979)",
+        "Full Metal Jacket (1987)",
+        "Fight Club (1999)",
+        "Shawshank Redemption, The (1994)",
+        "Departed, The (2006)",
+        "Inside Job (2010)",
+        "The Jinx: The Life and Deaths of Robert Durst (2015)",
+        "Wallace & Gromit: The Best of Aardman Animation (1996)",
+        "Patton (1970)",
+        "Hangar 18 (1980)"
+    ],
+    "Cluster_4": [
+        "Body of Evidence (1993)",
+        "Rust and Bone (De rouille et d'os) (2012)",
+        "American Pie Presents The Naked Mile (American Pie 5: The Naked Mile) (2006)",
+        "Films to Keep You Awake: The Christmas Tale (Pel\u00edculas para no dormir: Cuento de navidad) (2005)",
+        "Christmas Carol, A (1977)",
+        "Sorrow (2015)",
+        "Satanic (2016)",
+        "The Gracefield Incident (2015)",
+        "Fifty Shades of Grey (2015)",
+        "Surf Nazis Must Die (1987)"
+    ],
+    "Cluster_5": [
+        "Space Jam (1996)",
+        "Toys (1992)",
+        "Encino Man (1992)",
+        "Scream 3 (2000)",
+        "Teenage Mutant Ninja Turtles II: The Secret of the Ooze (1991)",
+        "Operation Dumbo Drop (1995)",
+        "Piranha (1978)",
+        "Snow Dogs (2002)",
+        "Series 7: The Contenders (2001)",
+        "Waiting to Exhale (1995)"
+    ],
+    "Cluster_6": [
+        "Heat (1995)",
+        "Usual Suspects, The (1995)",
+        "Clerks (1994)",
+        "Star Wars: Episode IV - A New Hope (1977)",
+        "Pulp Fiction (1994)",
+        "Forrest Gump (1994)",
+        "Dazed and Confused (1993)",
+        "Schindler's List (1993)",
+        "Silence of the Lambs, The (1991)",
+        "Fargo (1996)"
+    ],
+    "Cluster_7": [
+        "From Dusk Till Dawn (1996)",
+        "Ed Wood (1994)",
+        "Clear and Present Danger (1994)",
+        "Jungle Book, The (1994)",
+        "So I Married an Axe Murderer (1993)",
+        "Batman (1989)",
+        "Pinocchio (1940)",
+        "Mission: Impossible (1996)",
+        "James and the Giant Peach (1996)",
+        "Rock, The (1996)"
+    ],
+    "Cluster_8": [
+        "Mad Love (1995)",
+        "Stuart Saves His Family (1995)",
+        "Catwoman (2004)",
+        "Return to the Blue Lagoon (1991)",
+        "Twilight Saga: Breaking Dawn - Part 2, The (2012)",
+        "Karate Kid, Part III, The (1989)",
+        "Amityville 1992: It's About Time (1992)",
+        "Amityville: Dollhouse (1996)",
+        "April Fool's Day (1986)",
+        "Turbulence (1997)"
+    ],
+    "Cluster_9": [
+        "Dumb & Dumber (Dumb and Dumber) (1994)",
+        "Blown Away (1994)",
+        "Escape to Witch Mountain (1975)",
+        "Pete's Dragon (1977)",
+        "Newton Boys, The (1998)",
+        "Small Soldiers (1998)",
+        "Honey, I Shrunk the Kids (1989)",
+        "Return to Oz (1985)",
+        "20 Dates (1998)",
+        "Dick Tracy (1990)"
+    ]
+}

@@ -57,10 +57,10 @@ def welcome():
 
     return render_template("index.html")
 
-@app.route("/genre")
+@app.route("/random")
 def genre():
 
-    return render_template("reregenre.html")
+    return render_template("random.html")
 
 @app.route("/title")
 def title():

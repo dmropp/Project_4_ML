@@ -179,6 +179,7 @@ def rec_engine():
     # If the user has not liked 5 movies, continue choosing movies
     if session['like_counter'] < 5:
         random_movie = df['title'].sample().iloc[0]
+        # https://www.geeksforgeeks.org/flask-rendering-templates/#, referenced for rendering variables in HTML using Jinja
         return render_template("rec_engine_interactive.html", movie_title=random_movie, like_counter=session['like_counter'])    
 
 @app.route("/recommended_movies")

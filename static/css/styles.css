@@ -261,6 +261,10 @@ button {
     background-color: #dc3545; /* Change the "No" button color to red*/
   }
 
-  .movie-recs {
-    color: white;
-  }
+.movie-recs {
+color: white;
+}
+
+.random-movies {
+color: white;
+}

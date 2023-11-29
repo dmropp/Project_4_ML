@@ -61,14 +61,13 @@ def welcome():
 def genre():
     return render_template("reregenre.html")
 
+@app.route("/random")
+def random_movie():
+    return render_template("random.html")
+
 @app.route("/title")
 def title():
     return render_template("reretitle.html")
-
-@app.route("/random")
-def random():
-
-    return render_template("random.html")
 
 # Counter to keep track of the number of movie selections
 selection_counter = 0

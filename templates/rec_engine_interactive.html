@@ -5,24 +5,56 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Recommendations</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+    <!-- Add the link to the generated JavaScript file -->
+    <script src="../static/js/movie_data.js"></script>
 </head>
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="http://127.0.0.1:5000/">
+        <img src="../static/css/header_logo.png" alt="Your Logo" height="40">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5000/recommendation_engine">Yes or No?</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5000/random">Random</a>
+            </li>
+            <!-- Add more pages as needed -->
+        </ul>
+    </div>
+</header>
 <body>
-    <h1>Movie Recommendations</h1>
-    <p>{{ movie_title }}</p>
-    <p>Likes: {{ like_counter }}</p>
-    <form method="post" action="{{ url_for('rec_engine') }}">
-        <input type="hidden" name="action" value="like">
-        <button type="submit">Like</button>
-    </form>
+    <div class="random-movies">
+        <h1>What Do You Think of This Movie?</h1>
+        <h4>{{ movie_title }}</h4>
+        <h6>Likes: {{ like_counter }}</h6>
+        <form method="post" action="{{ url_for('rec_engine') }}">
+            <input type="hidden" name="action" value="like">
+            <button type="submit">Like</button>
+        </form>
 
-    <form method="post" action="{{ url_for('rec_engine') }}">
-        <input type="hidden" name="action" value="dislike">
-        <button type="submit">Dislike</button>
-    </form>
+        <form method="post" action="{{ url_for('rec_engine') }}">
+            <input type="hidden" name="action" value="dislike">
+            <button type="submit">Dislike</button>
+        </form>
 
-    <form method="post" action="{{ url_for('rec_engine') }}">
-        <input type="hidden" name="action" value="skip">
-        <button type="submit">Skip</button>
-    </form>
+        <form method="post" action="{{ url_for('rec_engine') }}">
+            <input type="hidden" name="action" value="skip">
+            <button type="submit">Skip</button>
+        </form>
+    </div>
 </body>
 </html>

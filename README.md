@@ -60,3 +60,6 @@ Our project focuses on crafting a movie recommender system using machine learnin
 
 - **Cold Start Problem:** Addressing new user/item recommendations with limited data.
 - **Complexity:** Weighing and integrating multiple techniques within the hybrid system.
+
+## Data Source
+* https://grouplens.org/datasets/movielens/

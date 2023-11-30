@@ -242,29 +242,26 @@ button {
   
   .btn {
     padding: 10px 20px; /* Increase button padding for a more prominent look*/
-    border: 2px solid #007bff; /* Change button border color to blue*/
+    border: 2px solid #155263; /* Change button border color to blue*/
     border-radius: 10px; /* Change button border radius to a rounder style*/
-    background-color: #fff; /* Change button background color to white*/
+    background-color: #ffd15b; /* Change button background color to white*/
     font-weight: bold; /* Make button text bolder*/
+    color: #155263; /* Button text color (white) */
   }
   
   .btn:focus, .btn:hover {
-    background-color: #e6f4ff; /* Change button hover color to a lighter shade of blue*/
-    border-color: #007bff; /* Maintain consistent border color on hover*/
+    background-color: #ffd15b brightness(150%); /* Change button hover color to a lighter shade of blue*/
+    border-color: #155263; /* Maintain consistent border color on hover*/
   }
   
-  .yes-btn {
-    background-color: #28a745; /* Change the "Yes" button color to green*/
-  }
-  
-  .no-btn {
-    background-color: #dc3545; /* Change the "No" button color to red*/
-  }
-
-.movie-recs {
-color: white;
-}
-
-.random-movies {
-color: white;
+/* Add styling for the button */
+button {
+    /* Your styling goes here */
+    background-color: #ffd15b; /* Green background color */
+    color: 155263; /* White text color */
+    padding: 10px 20px; /* Padding for the button */
+    border: none; /* No border */
+    border-radius: 5px; /* Border radius for rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+    margin-bottom: 10px; /* Add margin-bottom to create vertical distance */
 }

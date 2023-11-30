@@ -6,7 +6,7 @@ body {
     background-position: top center;
 
     text-align: center;
-    color: #000000; /* Set text color to white for better visibility on the background */
+    color: #fff; /* Set text color to white for better visibility on the background */
     margin: 0; /* Remove default margin to ensure full-width coverage */
 
 }

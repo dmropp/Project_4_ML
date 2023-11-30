@@ -69,5 +69,9 @@ This movie recommendation app utilizes three kinds of recommendation systems:
 ### Random Recommendation
 * Exactly as the name implies.
 
+## How to Use the Application
+* create_movie_sqlite_db.py - File to create the SQLite database from the original CSV files (links.csv, movies.csv, ratings.csv, tags.csv).
+* movie_rec_app.py - Movie recommendation app. Run this app to utilize the web interface.
+
 ## Data Source
 * https://grouplens.org/datasets/movielens/

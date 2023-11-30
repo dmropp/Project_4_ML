@@ -4,6 +4,10 @@
 
 Presentation slides: https://gamma.app/public/Movie-Recommendation-System-dzdlk3mcnwm5xkc
 
+## How to Use the Application
+* create_movie_sqlite_db.py - File to create the SQLite database from the original CSV files (links.csv, movies.csv, ratings.csv, tags.csv).
+* movie_rec_app.py - Movie recommendation app. Run this app to utilize the web interface.
+
 Movie recommendation systems offer personalized suggestions, aiding users in discovering content they're likely to enjoy. These systems not only enhance user satisfaction but also contribute to increased engagement and revenue for businesses.
 
 ## Why Personalized Recommendations Matter

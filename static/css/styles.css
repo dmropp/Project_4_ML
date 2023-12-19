@@ -218,6 +218,14 @@ button {
     color: white;
 }
 
+.random-movies{
+    color: white;
+}
+
+.movie-recs{
+    color: white;
+}
+
 /* Style for the reload button */
 .btn-reload {
     background-color: #ffd15b; /* Button background color (Bootstrap primary color) */
